@@ -1,0 +1,16 @@
+{
+  "total": 5,
+  "error_total": 2,
+  "error_rate": 40.0,
+  "top_url": "/login",
+  "top_url_count": 3,
+  "danger_url": "/admin",
+  "danger_count": 1,
+  "health_score": 20,
+  "access_admin": true,
+  "status_result": {
+    "200": 3,
+    "403": 1,
+    "500": 1
+  }
+}

@@ -1,4 +1,5 @@
 import os
+import json
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(BASE_DIR, "sample.log")
@@ -7,6 +8,34 @@ def read_log(path):
     with open(path, "r", encoding="utf-8") as f:
         for line in f:
             yield line.strip()
+            
+def save_report_json(stats, out_path="report.json"):
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(stats, f, ensure_ascii=False, indent=2)
+        
+def save_report_txt(stats, out_path="report.txt"):
+    with open(out_path, "w", encoding="utf-8") as f:
+        f.write(f"총 요청 수: {stats['total']}\n")
+        f.write(f"에러 요청 수: {stats['error_total']}\n")
+        f.write(f"에러율: {stats['error_rate']}%\n\n")
+
+        f.write(
+            f"가장 많이 요청된 URL: "
+            f"{stats['top_url']} "
+            f"({stats['top_url_count']}회)\n"
+        )
+
+        if stats["danger_url"]:
+            f.write(
+                f"가장 위험한 URL: "
+                f"{stats['danger_url']} "
+                f"({stats['danger_count']}회 에러)\n"
+            )
+
+        f.write(f"\nLog Health Score: {stats['health_score']} / 100\n")
+
+        if stats["access_admin"]:
+            f.write("\n관리자 페이지 접근 시도 감지\n")
             
 def parse_url(line):
     extract_middle = line.split('"')
@@ -98,3 +127,8 @@ def generate_story(stats):
 if (__name__ == "__main__"):
     stats = analyze_log("sample.log")
     generate_story(stats)
+    
+    save_report_json(stats)
+    save_report_txt(stats)
+    
+    print("\nreport.json / report.txt 생성완료")
